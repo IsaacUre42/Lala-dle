@@ -23,4 +23,16 @@ async function fetchLyrics (trackName: string, trackArtist: string) {
     }
 }
 
+function calculateLa (lyrics: string) {
+    const laRegex = ["la ", "la-", "oh ", "oh-", "lala"]
+    let count = 0
+    for (const la in laRegex) {
+        const matches = lyrics.toLowerCase().match(la);
+        count += matches ? matches.length : 0;
+    }
+    // const lyricWords = lyrics.split(/[\s-]+/);
+    // const lyricsWordCount = lyricWords.filter(word => word.length > 0).length;
+    return count;
+}
+
 export default fetchLyrics;

@@ -1,6 +1,6 @@
 import {Box, Button, Container, TextField, Typography} from "@mui/material";
 import {useState} from "react";
-import fetchLyrics from "../services/lrclib.ts";
+import fetchLyrics from "../services/lyrics.ts";
 
 function Search () {
     const [searchTitle, setSearchTitle] = useState("");
