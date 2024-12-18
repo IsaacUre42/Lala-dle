@@ -11,7 +11,7 @@ function Search () {
         setSearchTitle("");
         setSearchArtist("");
         const lyricsResponse = await fetchLyrics(searchTitle, searchArtist);
-        setLyrics(lyricsResponse.plainLyrics);
+        console.log(lyricsResponse);
     };
 
     return (

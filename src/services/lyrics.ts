@@ -1,4 +1,5 @@
 import LyricsResponse from "../types/responses/LyricsResponse.ts";
+import processedLyrics from "../types/ProcessedLyrics.ts";
 
 const HEADERS = {
     'Lrclib-Client': 'LalalaEnjoyer v0.0.1 (local only)'
@@ -23,16 +24,32 @@ async function fetchLyrics (trackName: string, trackArtist: string) {
     }
 }
 
-function calculateLa (lyrics: string) {
-    const laRegex = ["la ", "la-", "oh ", "oh-", "lala"]
-    let count = 0
-    for (const la in laRegex) {
-        const matches = lyrics.toLowerCase().match(la);
-        count += matches ? matches.length : 0;
+function calculateNonsenseCount(lyrics: string) {
+    const laRegex = ["la\\s", "la-", "oh\\s", "oh-", "lala", "la\\)", "oh\\)"];
+    const multipliers = [1, 1, 1, 1, 2, 1, 1];
+    let count = 0;
+    for (const index in laRegex) {
+        const la = laRegex[index];
+        const regex = new RegExp(la, 'gi');
+        const matches = lyrics.toLowerCase().match(regex);
+        console.log(matches);
+        const multiplier = multipliers[index];
+        count += matches ? matches.length * multiplier : 0;
     }
-    // const lyricWords = lyrics.split(/[\s-]+/);
-    // const lyricsWordCount = lyricWords.filter(word => word.length > 0).length;
     return count;
 }
 
-export default fetchLyrics;
+async function processLyrics (trackName: string, trackArtist: string) {
+    const lyrics = await fetchLyrics(trackName, trackArtist);
+    const nonsenseCount = calculateNonsenseCount(lyrics.plainLyrics);
+    const lyricWords = lyrics.plainLyrics.split(/[\s-]+/);
+    const lyricsWordCount = lyricWords.filter(word => word.length > 0).length;
+    const processedLyrics : processedLyrics = {
+        lyrics: lyrics,
+        nonsenseWordCount: nonsenseCount,
+        totalWordCount: lyricsWordCount
+    }
+    return processedLyrics;
+}
+
+export default processLyrics;
