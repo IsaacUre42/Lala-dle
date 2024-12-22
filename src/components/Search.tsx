@@ -1,6 +1,7 @@
 import {Box, Button, Container, TextField} from "@mui/material";
 import {useState} from "react";
 import fetchLyrics from "../services/lyrics.ts";
+import fetchArtist from "../services/artists.ts";
 
 function Search () {
     const [searchTitle, setSearchTitle] = useState("");
@@ -14,6 +15,10 @@ function Search () {
         setLyrics(lyricsResponse.lyrics.plainLyrics)
         console.log(lyricsResponse)
     };
+
+    const handleSearchArtist = async () => {
+        await fetchArtist(searchArtist);
+    }
 
     return (
         <Box sx={{bgcolor: 'white', height: '100vh', width: '100vw'}}>
@@ -44,6 +49,7 @@ function Search () {
                 alignItems: 'center',
             }}>
                 <Button variant="contained" onClick={handleSearch}>Search</Button>
+                <Button variant="contained" onClick={handleSearchArtist}>Search (Artist Only)</Button>
             </Container>
             <TextField sx={{color: 'black'}} value={lyrics}></TextField>
         </Box>

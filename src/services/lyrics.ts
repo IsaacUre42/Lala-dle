@@ -2,7 +2,7 @@ import LyricsResponse from "../types/responses/LyricsResponse.ts";
 import processedLyrics from "../types/ProcessedLyrics.ts";
 
 const HEADERS = {
-    'Lrclib-Client': 'LalalaEnjoyer v0.0.1 (local only)'
+    'Lrclib-Client': 'LalalaEnjoyer v0.1.0 (local only)'
 }
 
 
