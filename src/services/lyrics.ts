@@ -5,6 +5,14 @@ const HEADERS = {
     'Lrclib-Client': 'LalalaEnjoyer v0.0.1 (local only)'
 }
 
+
+/**
+ * Search and fetch song lyrics information by song name and artist
+ * Kudos to lrclib.net
+ *
+ * @param trackName Song Name
+ * @param trackArtist Artist Name
+ */
 async function fetchLyrics (trackName: string, trackArtist: string) {
     try {
         const encodedTrackName = encodeURIComponent(trackName);
@@ -24,21 +32,35 @@ async function fetchLyrics (trackName: string, trackArtist: string) {
     }
 }
 
+/**
+ * Use Regex to count the occurrences of nonsense lyrics in a song.
+ * @param lyrics Song Lyrics
+ */
 function calculateNonsenseCount(lyrics: string) {
-    const laRegex = ["la\\s", "la-", "oh\\s", "oh-", "lala", "la\\)", "oh\\)"];
-    const multipliers = [1, 1, 1, 1, 2, 1, 1];
+    const laRegex = ["la\\s", "la-", "oh\\s", "oh-", "lala", "la\\)", "oh\\)", "na\\s", "na-", "na\\)"];
     let count = 0;
     for (const index in laRegex) {
-        const la = laRegex[index];
-        const regex = new RegExp(la, 'gi');
+        const regex = new RegExp(laRegex[index], 'gi');
         const matches = lyrics.toLowerCase().match(regex);
         console.log(matches);
-        const multiplier = multipliers[index];
+        let multiplier = 1;
+        if (matches != null) {
+            multiplier = Math.floor(matches[0].trim().length / 2) // Count 4 letter nonsense more than once.
+        }
         count += matches ? matches.length * multiplier : 0;
     }
     return count;
 }
 
+/**
+ * The public function that calls for a song lookup and processes the result.
+ * TODO: Handle Song not found case.
+ *
+ * @param trackName Song Name
+ * @param trackArtist Song Artist
+ *
+ * @returns ProcessedLyrics Type
+ */
 async function processLyrics (trackName: string, trackArtist: string) {
     const lyrics = await fetchLyrics(trackName, trackArtist);
     const nonsenseCount = calculateNonsenseCount(lyrics.plainLyrics);

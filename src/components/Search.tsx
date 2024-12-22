@@ -1,4 +1,4 @@
-import {Box, Button, Container, TextField, Typography} from "@mui/material";
+import {Box, Button, Container, TextField} from "@mui/material";
 import {useState} from "react";
 import fetchLyrics from "../services/lyrics.ts";
 
@@ -11,7 +11,8 @@ function Search () {
         setSearchTitle("");
         setSearchArtist("");
         const lyricsResponse = await fetchLyrics(searchTitle, searchArtist);
-        console.log(lyricsResponse);
+        setLyrics(lyricsResponse.lyrics.plainLyrics)
+        console.log(lyricsResponse)
     };
 
     return (
@@ -44,7 +45,7 @@ function Search () {
             }}>
                 <Button variant="contained" onClick={handleSearch}>Search</Button>
             </Container>
-            <Typography variant={"body1"} sx={{color: 'black'}}>{lyrics}</Typography>
+            <TextField sx={{color: 'black'}} value={lyrics}></TextField>
         </Box>
 )
 }
