@@ -23,7 +23,7 @@ async function fetchAlbums (artist: string) {
                 albums.push(bestRelease);
             }
         }
-        return albums;
+        return [albums, result.artists[0].name];
 
     } catch (error) {
         console.error('Error fetching albums:', error);
@@ -34,7 +34,7 @@ async function fetchAlbums (artist: string) {
  * Fetch the list of tracks contained within a given album by music-brainz release id
  * @param albumId Music-Brainz release id
  */
-async function fetchTracks (albumId : string) {
+export async function fetchTracks (albumId : string) {
     try {
         const tracks : string[] = []
         const single = await mbApi.lookup('release', albumId, ["recordings"]);
@@ -93,9 +93,9 @@ async function processArtist(artist: string) {
         const processedAlbums: Album[] = []
         const releases = await fetchAlbums(artist);
         for (const release of releases) {
-            const artist = release.artist;
+            const albumArtist =
             const artworkUrl = await fetchCoverArt(release.id);
-            const album : Album = {mbid=release.id, artist=artist, title=release.title, coverArtUrl=artworkUrl, tracks=[]}
+            const album : Album = {mbid=release.id, artist=artist, title=release, coverArtUrl=artworkUrl, tracks=[]}
             processedAlbums.push(album);
         }
         return processedAlbums;
@@ -105,4 +105,4 @@ async function processArtist(artist: string) {
     }
 }
 
-export default [processArtist, fetchTracks];
+export default processArtist;

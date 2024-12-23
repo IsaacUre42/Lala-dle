@@ -1,23 +1,16 @@
 import {Box, Button, Container, TextField} from "@mui/material";
 import {useState} from "react";
-import fetchLyrics from "../services/lyrics.ts";
-import fetchArtist from "../services/artists.ts";
+import processArtist from "../services/artists.ts";
+import Album from "../types/Album.ts";
+
 
 function Search () {
-    const [searchTitle, setSearchTitle] = useState("");
     const [searchArtist, setSearchArtist] = useState("");
-    const [lyrics, setLyrics] = useState("");
-
-    const handleSearch = async () => {
-        setSearchTitle("");
-        setSearchArtist("");
-        const lyricsResponse = await fetchLyrics(searchTitle, searchArtist);
-        setLyrics(lyricsResponse.text.plainLyrics)
-        console.log(lyricsResponse)
-    };
+    const [albums, setAlbums] = useState<Album[]>([]);
 
     const handleSearchArtist = async () => {
-        await fetchArtist(searchArtist);
+        const result = await processArtist(searchArtist);
+        setAlbums(result);
     }
 
     return (
@@ -30,12 +23,6 @@ function Search () {
                 justifyContent: 'center',
                 alignItems: 'center',
             }}>
-                <TextField value={searchTitle}
-                           onChange={(event) => setSearchTitle(event.target.value)}
-                           id="standard-basic"
-                           fullWidth
-                           label="Title"
-                           variant="outlined" />
                 <TextField value={searchArtist}
                            onChange={(event) => setSearchArtist(event.target.value)}
                            id="standard-basic"
@@ -48,10 +35,8 @@ function Search () {
                 justifyContent: 'center',
                 alignItems: 'center',
             }}>
-                <Button variant="contained" onClick={handleSearch}>Search</Button>
                 <Button variant="contained" onClick={handleSearchArtist}>Search (Artist Only)</Button>
             </Container>
-            <TextField sx={{color: 'black'}} value={lyrics}></TextField>
         </Box>
 )
 }
