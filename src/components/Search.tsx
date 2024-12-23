@@ -12,7 +12,7 @@ function Search () {
         setSearchTitle("");
         setSearchArtist("");
         const lyricsResponse = await fetchLyrics(searchTitle, searchArtist);
-        setLyrics(lyricsResponse.lyrics.plainLyrics)
+        setLyrics(lyricsResponse.text.plainLyrics)
         console.log(lyricsResponse)
     };
 

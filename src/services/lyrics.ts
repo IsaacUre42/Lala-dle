@@ -1,5 +1,5 @@
 import LyricsResponse from "../types/responses/LyricsResponse.ts";
-import processedLyrics from "../types/ProcessedLyrics.ts";
+import processedLyrics from "../types/Lyrics.ts";
 
 const HEADERS = {
     'Lrclib-Client': 'LalalaEnjoyer v0.1.0 (local only)'
@@ -59,7 +59,7 @@ function calculateNonsenseCount(lyrics: string) {
  * @param trackName Song Name
  * @param trackArtist Song Artist
  *
- * @returns ProcessedLyrics Type
+ * @returns Lyrics Type
  */
 async function processLyrics (trackName: string, trackArtist: string) {
     const lyrics = await fetchLyrics(trackName, trackArtist);
@@ -67,7 +67,7 @@ async function processLyrics (trackName: string, trackArtist: string) {
     const lyricWords = lyrics.plainLyrics.split(/[\s-]+/);
     const lyricsWordCount = lyricWords.filter(word => word.length > 0).length;
     const processedLyrics : processedLyrics = {
-        lyrics: lyrics,
+        text: lyrics,
         nonsenseWordCount: nonsenseCount,
         totalWordCount: lyricsWordCount
     }
