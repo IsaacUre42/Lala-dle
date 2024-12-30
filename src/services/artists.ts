@@ -1,5 +1,4 @@
-import {IRelease, MusicBrainzApi} from 'musicbrainz-api';
-import Album from "../types/Album.ts";
+import {IReleaseGroup, MusicBrainzApi} from 'musicbrainz-api';
 
 const mbApi = new MusicBrainzApi({
     appName: 'laladle',
@@ -11,19 +10,18 @@ const mbApi = new MusicBrainzApi({
  * Fetch a list of music-brainz releases for all the albums by a given artist.
  * @param artist Artist Name
  */
-async function fetchAlbums (artist: string) {
+export async function fetchReleaseGroups (artist: string) {
     try {
         const result = await mbApi.search('artist', {query: {artist}});
         const releaseGroups = await mbApi.browse('release-group',{'artist': result.artists[0].id});
 
-        const albums: IRelease[] = [];
+        const validReleaseGroups: IReleaseGroup[] = [];
         for (const releaseGroup of releaseGroups["release-groups"]) {
             if (releaseGroup["primary-type"] === "Album" && releaseGroup["secondary-types"].length === 0) {
-                const bestRelease = await fetchFirstValidRelease(releaseGroup.id);
-                albums.push(bestRelease);
+                validReleaseGroups.push(releaseGroup);
             }
         }
-        return [albums, result.artists[0].name];
+        return validReleaseGroups;
 
     } catch (error) {
         console.error('Error fetching albums:', error);
@@ -53,7 +51,7 @@ export async function fetchTracks (albumId : string) {
  * Fetch the url for cover art for a given music-brainz release id.
  * @param albumId Music-Brainz Release Id.
  */
-async function fetchCoverArt(albumId: string) {
+export async function fetchCoverArt(albumId: string) {
     try {
         const response = await fetch(`https://coverartarchive.org/release/${albumId}/front`);
         return response.url;
@@ -68,7 +66,7 @@ async function fetchCoverArt(albumId: string) {
  * Fetch the first release of a release group that is official and contains cover art.
  * @param releaseGroupId Music-Brainz Release Group Id
  */
-async function fetchFirstValidRelease(releaseGroupId: string) {
+export async function fetchFirstValidRelease(releaseGroupId: string) {
     try {
         const releases = await mbApi.browse('release', { 'release-group': releaseGroupId });
         for (const release of releases.releases) {
@@ -83,26 +81,3 @@ async function fetchFirstValidRelease(releaseGroupId: string) {
         throw error;
     }
 }
-
-/**
- * Return a list of processed album types without the track list to reduce API calls.
- * @param artist Artist Name
- */
-async function processArtist(artist: string) {
-    try {
-        const processedAlbums: Album[] = []
-        const releases = await fetchAlbums(artist);
-        for (const release of releases) {
-            const albumArtist =
-            const artworkUrl = await fetchCoverArt(release.id);
-            const album : Album = {mbid=release.id, artist=artist, title=release, coverArtUrl=artworkUrl, tracks=[]}
-            processedAlbums.push(album);
-        }
-        return processedAlbums;
-    } catch(error) {
-        console.error('Failed to process artist:', error);
-        throw error;
-    }
-}
-
-export default processArtist;

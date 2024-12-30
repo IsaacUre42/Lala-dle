@@ -1,17 +1,21 @@
-import {Box, Button, Container, TextField} from "@mui/material";
+import {Box, Button, Container, Grid2, TextField} from "@mui/material";
 import {useState} from "react";
-import processArtist from "../services/artists.ts";
-import Album from "../types/Album.ts";
+import {fetchReleaseGroups} from "../services/artists.ts";
+import AlbumTile from "./AlbumTile.tsx";
+import {IReleaseGroup} from "musicbrainz-api";
 
 
 function Search () {
     const [searchArtist, setSearchArtist] = useState("");
-    const [albums, setAlbums] = useState<Album[]>([]);
+    const [releases, setReleases] = useState<IReleaseGroup[]>([]);
 
     const handleSearchArtist = async () => {
-        const result = await processArtist(searchArtist);
-        setAlbums(result);
+        const releaseGroups = await fetchReleaseGroups(searchArtist);
+        setReleases(releaseGroups ? releaseGroups : []);
     }
+
+    const album_rows = () =>
+        releases.map((release : IReleaseGroup) => <AlbumTile release={release} key={release.id} />);
 
     return (
         <Box sx={{bgcolor: 'white', height: '100vh', width: '100vw'}}>
@@ -37,6 +41,9 @@ function Search () {
             }}>
                 <Button variant="contained" onClick={handleSearchArtist}>Search (Artist Only)</Button>
             </Container>
+            <Grid2>
+                {album_rows()}
+            </Grid2>
         </Box>
 )
 }
