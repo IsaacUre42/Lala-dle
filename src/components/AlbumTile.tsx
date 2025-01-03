@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card, CardContent, CardMedia, Typography} from "@mui/material";
+import {Box} from "@mui/material";
 import {fetchCoverArt, fetchFirstValidRelease} from "../services/artists.ts";
 import {IReleaseGroup} from "musicbrainz-api";
 // import Lyrics from "../types/Lyrics.ts";
@@ -34,18 +34,10 @@ const AlbumTile: React.FC<AlbumTileProps> = ( {release}) => {
     }, [release]);
 
     return (
-        <Card sx={{ maxWidth: 350 }}>
-            <CardMedia
-                sx={{ height: 300, width: 300 }}
-                image={coverArt}
-                title={title}
-                />
-            <CardContent>
-                <Typography gutterBottom variant={"h3"} component={"div"}>
-                    {title}
-                </Typography>
-            </CardContent>
-        </Card>
+        <Box id={release.id} sx={{ margin: '10%', minHeight: '30vh'}}>
+            <img src={coverArt} style={{width: '40vh', aspectRatio: '1/1'}} alt={title}>
+            </img>
+        </Box>
     );
 };
 
