@@ -1,16 +1,17 @@
-import {Box, Button, Card, Container, Stack, TextField} from "@mui/material";
-import {useEffect, useRef, useState} from "react";
+import {Box, Button, Card, Container, TextField} from "@mui/material";
+import {useEffect, useState} from "react";
 import {fetchReleaseGroups} from "../services/artists.ts";
 import AlbumTile from "./AlbumTile.tsx";
 import {IReleaseGroup} from "musicbrainz-api";
+import {animate, motion, useMotionValue} from "framer-motion";
 
 
 function Search () {
     const [searchArtist, setSearchArtist] = useState("");
     const [releases, setReleases] = useState<IReleaseGroup[]>([]);
-    const albumsContainerRef = useRef<HTMLDivElement>(null);
     const [albumIndex, setAlbumIndex] = useState(0);
     const [albumIds, setAlbumIds] = useState<string[]>([]);
+    const xTranslation = useMotionValue(0);
 
     const handleSearchArtist = async () => {
         const releaseGroups = await fetchReleaseGroups(searchArtist);
@@ -30,13 +31,21 @@ function Search () {
     }
 
     useEffect(() => {
-        if (albumsContainerRef.current) {
-            const selected = document.getElementById(albumIds[albumIndex]);
-            if (selected) {
-                selected.scrollIntoView({behavior: 'smooth', block: 'center'});
-            }
+        // Help from: https://www.youtube.com/watch?v=Ot4nZ6UjJLE
+        const scroller = document.getElementById("scrolling")
+        let finalPosition = 0;
+        const startingPosition = xTranslation.get();
+        if (scroller) {
+            finalPosition = (-(scroller.scrollWidth / albumIds.length) * albumIndex) + scroller.getBoundingClientRect().width / 3;
+            console.log(scroller.scrollWidth);
         }
-    }, [releases, albumIndex, albumIds]);
+
+        const controls = animate(xTranslation, [startingPosition, finalPosition], {
+            ease: 'easeOut',
+            duration: 0.5,
+        })
+        return controls.stop;
+    }, [xTranslation, albumIds, albumIndex]);
 
     const album_rows = () =>
         releases.map((release : IReleaseGroup) => <AlbumTile release={release} key={release.id} />);
@@ -66,10 +75,14 @@ function Search () {
                     <Button variant="contained" onClick={handleSearchArtist}>Search (Artist Only)</Button>
                 </Container>
             </Card>
-            <Container sx={{overflowX: 'scroll', marginTop: 10, minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
-                <Stack direction={"row"} sx={{paddingLeft: '40%'}} ref={albumsContainerRef}>
+            <Container id="scrolling" sx={{overflowX: 'scroll', marginTop: 10, minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
+                {/*<Stack direction={"row"} sx={{paddingLeft: '40%'}} ref={albumsContainerRef}>*/}
+                {/*    {album_rows()}*/}
+                {/*</Stack>*/}
+
+                <motion.div style={{x: xTranslation, height: '50vh', display: 'flex'}}>
                     {album_rows()}
-                </Stack>
+                </motion.div>
             </Container>
             <Button variant="contained" onClick={() => setAlbumIndex(Math.max(albumIndex - 1, 0))}>
                 Prev

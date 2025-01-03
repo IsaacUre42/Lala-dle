@@ -8,6 +8,7 @@ type AlbumTileProps = {
     release: IReleaseGroup;
 };
 
+//TODO: Make template images load immediately so that size is consistent.
 const AlbumTile: React.FC<AlbumTileProps> = ( {release}) => {
     const [coverArt, setCoverArt] = useState("");
     const [title, setTitle] = useState(release.title);
@@ -34,7 +35,7 @@ const AlbumTile: React.FC<AlbumTileProps> = ( {release}) => {
     }, [release]);
 
     return (
-        <Box id={release.id} sx={{ margin: '10%', minHeight: '30vh'}}>
+        <Box id={release.id} sx={{ margin: '10%', Height: '30vh'}}>
             <img src={coverArt} style={{width: '40vh', aspectRatio: '1/1'}} alt={title}>
             </img>
         </Box>
