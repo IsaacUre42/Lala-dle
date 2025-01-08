@@ -1,19 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Box} from "@mui/material";
 import {fetchCoverArt, fetchFirstValidRelease} from "../services/artists.ts";
 import {IReleaseGroup} from "musicbrainz-api";
-// import Lyrics from "../types/Lyrics.ts";
 
 type AlbumTileProps = {
     release: IReleaseGroup;
 };
 
-//TODO: Make template images load immediately so that size is consistent.
-const AlbumTile: React.FC<AlbumTileProps> = ( {release}) => {
+const AlbumTile: React.FC<AlbumTileProps> = ({release}) => {
     const [coverArt, setCoverArt] = useState("");
     const [title, setTitle] = useState(release.title);
     const [albumMbid, setAlbumMbid] = useState("");
-    // const [tracks, setTracks] = useState<Lyrics[]>([]);
 
     useEffect(() => {
         const lazyLoadArt = async () => {
@@ -35,10 +31,18 @@ const AlbumTile: React.FC<AlbumTileProps> = ( {release}) => {
     }, [release]);
 
     return (
-        <Box id={release.id} sx={{ margin: '10%', Height: '30vh'}}>
-            <img src={coverArt} style={{width: '40vh', aspectRatio: '1/1'}} alt={title}>
+        <div id={release.id} style={{marginLeft: '5vw', height: '30vh', position: 'relative'}}>
+            <div className="album" style={{height: '90%',
+                backgroundColor: 'gray', aspectRatio: '1/1',
+                display: coverArt ? 'none' : 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                color: 'white'}}>
+                {title}
+            </div>
+            <img src={coverArt} style={{aspectRatio: '1/1', display: coverArt ? 'block' : 'none'}} alt={title} className="album">
             </img>
-        </Box>
+        </div>
     );
 };
 

@@ -13,7 +13,7 @@ function Search () {
     const [albumIds, setAlbumIds] = useState<string[]>([]);
     const xTranslation = useMotionValue(0);
 
-    const handleSearchArtist = async () => {
+    async function handleSearchArtist () {
         const releaseGroups = await fetchReleaseGroups(searchArtist);
         if (releaseGroups) {
             //Sort the releases by their first release date
@@ -24,7 +24,7 @@ function Search () {
             });
             setAlbumIndex(0);
             setReleases(releaseGroups.reverse());
-            setAlbumIds(releases.map(release => release.id));
+            setAlbumIds(releaseGroups.map(release => release.id));
         } else {
             setReleases([]);
         }
@@ -32,19 +32,32 @@ function Search () {
 
     useEffect(() => {
         // Help from: https://www.youtube.com/watch?v=Ot4nZ6UjJLE
-        const scroller = document.getElementById("scrolling")
-        let finalPosition = 0;
-        const startingPosition = xTranslation.get();
-        if (scroller) {
-            finalPosition = (-(scroller.scrollWidth / albumIds.length) * albumIndex) + scroller.getBoundingClientRect().width / 3;
-            console.log(scroller.scrollWidth);
+
+        const updatePosition = () => {
+            const target = document.getElementById(albumIds[albumIndex]);
+            const scroller = document.getElementById("scrolling");
+            let finalPosition = 0;
+            const startingPosition = xTranslation.get();
+            if (target && scroller) {
+                const xPos = target.getBoundingClientRect().x
+                const targetWidth = target.getBoundingClientRect().width
+                const scrollerWidth = scroller.getBoundingClientRect().width
+                finalPosition = (xTranslation.get() - (xPos - (scrollerWidth / 2) + targetWidth / 2));
+            }
+
+            const controls = animate(xTranslation, [startingPosition, finalPosition], {
+                ease: 'easeOut',
+                duration: 0.5,
+            })
+            return controls.stop;
         }
 
-        const controls = animate(xTranslation, [startingPosition, finalPosition], {
-            ease: 'easeOut',
-            duration: 0.5,
-        })
-        return controls.stop;
+        updatePosition();
+        window.addEventListener('resize', updatePosition);
+
+        return () => {
+            window.removeEventListener('resize', updatePosition);
+        }
     }, [xTranslation, albumIds, albumIndex]);
 
     const album_rows = () =>
@@ -64,7 +77,7 @@ function Search () {
                                id="standard-basic"
                                fullWidth
                                label="Artist"
-                               variant="outlined" />
+                               variant="outlined"/>
                 </Container>
                 <Container maxWidth={"sm"} sx={{
                     display: 'flex',
@@ -75,12 +88,12 @@ function Search () {
                     <Button variant="contained" onClick={handleSearchArtist}>Search (Artist Only)</Button>
                 </Container>
             </Card>
-            <Container id="scrolling" sx={{overflowX: 'scroll', marginTop: 10, minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
+            <Container id="scrolling" sx={{overflowX: 'none', marginTop: 10, minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
                 {/*<Stack direction={"row"} sx={{paddingLeft: '40%'}} ref={albumsContainerRef}>*/}
                 {/*    {album_rows()}*/}
                 {/*</Stack>*/}
 
-                <motion.div style={{x: xTranslation, height: '50vh', display: 'flex'}}>
+                <motion.div id="scroller" style={{x: xTranslation, height: '50vh', display: 'flex'}}>
                     {album_rows()}
                 </motion.div>
             </Container>
