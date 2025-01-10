@@ -40,7 +40,7 @@ const AlbumTile: React.FC<AlbumTileProps> = ({release}) => {
                 color: 'white'}}>
                 {title}
             </div>
-            <img src={coverArt} style={{aspectRatio: '1/1', display: coverArt ? 'block' : 'none'}} alt={title} className="album">
+            <img draggable='false' src={coverArt} style={{userSelect: 'none' ,aspectRatio: '1/1', display: coverArt ? 'block' : 'none'}} alt={title} className="album">
             </img>
         </div>
     );
