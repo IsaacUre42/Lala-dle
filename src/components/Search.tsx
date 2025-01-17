@@ -11,6 +11,7 @@ function Search () {
     const [releases, setReleases] = useState<IReleaseGroup[]>([]);
     const [albumIndex, setAlbumIndex] = useState(0);
     const [albumIds, setAlbumIds] = useState<string[]>([]);
+    const [tileSelected, setTileSelected] = useState(false);
     const xTranslation = useMotionValue(0);
 
     async function handleSearchArtist () {
@@ -60,8 +61,13 @@ function Search () {
         }
     }, [xTranslation, albumIds, albumIndex]);
 
+    const handleTileClick = () => {
+        setTileSelected(!tileSelected);
+    }
+
     const album_rows = () =>
-        releases.map((release : IReleaseGroup) => <AlbumTile release={release} key={release.id} />);
+        releases.map((release : IReleaseGroup) => <AlbumTile release={release} onTileClick={handleTileClick} key={release.id} />);
+
 
     return (
         <Box sx={{bgcolor: 'black', height: '100vh', width: '100vw'}}>
