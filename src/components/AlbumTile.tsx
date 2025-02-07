@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {fetchCoverArt, fetchFirstValidRelease} from "../services/artists.ts";
+import {fetchCoverArt, queueFetchFirstValidRelease} from "../services/artists.ts";
 import {IReleaseGroup} from "musicbrainz-api";
 
 type AlbumTileProps = {
@@ -24,7 +24,7 @@ const AlbumTile: React.FC<AlbumTileProps> = ({release, onTileClick}) => {
 
     useEffect(() => {
         const loadAlbum = async () => {
-            const result = await fetchFirstValidRelease(release.id);
+            const result = await queueFetchFirstValidRelease(release.id);
             setAlbumMbid(result.id);
             setTitle(result.title);
         }

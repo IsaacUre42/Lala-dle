@@ -1,7 +1,7 @@
-import {IReleaseGroup, MusicBrainzApi} from 'musicbrainz-api';
+import {IRelease, IReleaseGroup, MusicBrainzApi} from 'musicbrainz-api';
 
 const mbApi = new MusicBrainzApi({
-    appName: 'laladle',
+    appName: 'Lalala Enjoyers',
     appVersion: '0.1.0',
     appContactInfo: 'zeek28@outlook.com',
 });
@@ -66,7 +66,7 @@ export async function fetchCoverArt(albumId: string) {
  * Fetch the first release of a release group that is official and contains cover art.
  * @param releaseGroupId Music-Brainz Release Group Id
  */
-export async function fetchFirstValidRelease(releaseGroupId: string) {
+async function fetchFirstValidRelease(releaseGroupId: string) {
     try {
         const releases = await mbApi.browse('release', { 'release-group': releaseGroupId });
         for (const release of releases.releases) {
@@ -80,4 +80,45 @@ export async function fetchFirstValidRelease(releaseGroupId: string) {
         console.error('Error fetching releases:', error);
         throw error;
     }
+}
+
+type QueueItem = {
+    releaseGroupId: string;
+    resolve: (value: IRelease) => void;
+    reject: (reason?: string) => void;
+};
+
+const requestQueue: QueueItem[] = [];
+let isProcessingQueue = false;
+
+/**
+ * Queue function to avoid throttling from MusicBrainz. Function help from Copilot
+ */
+async function processQueue() {
+    if (isProcessingQueue) return;
+    isProcessingQueue = true;
+
+    while (requestQueue.length > 0) {
+        const { releaseGroupId, resolve, reject } = requestQueue.shift()!;
+        try {
+            const result = await fetchFirstValidRelease(releaseGroupId);
+            resolve(result);
+        } catch {
+            reject("Failed to retrieve release: " + releaseGroupId);
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000)); //rate limit 1s per doc
+    }
+
+    isProcessingQueue = false;
+}
+
+/**
+ * MusicBrainz API is rate limited so the requests for the album information is pushed through a queue.
+ * @param releaseGroupId Music-Brainz Release Group Id
+ */
+export function queueFetchFirstValidRelease(releaseGroupId: string): Promise<IRelease> {
+    return new Promise((resolve, reject) => {
+        requestQueue.push({ releaseGroupId, resolve, reject });
+        processQueue();
+    });
 }
