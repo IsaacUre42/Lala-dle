@@ -73,7 +73,7 @@ function Albums () {
 
 
     return (
-        <Box sx={{bgcolor: 'black', height: '100vh', width: '100vw'}}>
+        <Box sx={{background: 'black', height: '100vh', width: '100vw'}}>
             <Container id="scrolling" sx={{overflowX: 'none', marginTop: '25vh', minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
                 <motion.div id="scroller" style={{x: xTranslation, height: '50vh', display: 'flex'}}>
                     {album_rows()}
