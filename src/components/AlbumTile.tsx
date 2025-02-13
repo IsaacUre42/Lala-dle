@@ -37,7 +37,7 @@ const AlbumTile: React.FC<AlbumTileProps> = ({ release }) => {
 
     return (
         <div id={release.id}
-             style={{ marginLeft: '5vw', height: '30vh', position: 'relative' }}
+             style={{ marginLeft: '5vw', height: '50vh', position: 'relative' }}
              onClick={handleClick}
         >
             <div className="album" style={{
@@ -51,7 +51,13 @@ const AlbumTile: React.FC<AlbumTileProps> = ({ release }) => {
             }}>
                 {title}
             </div>
-            <img draggable='false' src={coverArt} style={{ userSelect: 'none', aspectRatio: '1/1', display: coverArt ? 'block' : 'none' }} alt={title} className="album">
+            <img draggable='false' src={coverArt} style={{
+                userSelect: 'none',
+                aspectRatio: '1/1',
+                display: coverArt ? 'block' : 'none',
+                height: '100%'}}
+                 alt={title}
+                 className="album">
             </img>
         </div>
     );
