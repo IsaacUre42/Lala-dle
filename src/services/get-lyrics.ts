@@ -7,7 +7,7 @@ const HEADERS = {
 
 
 /**
- * Search and fetch song lyrics information by song name and artist
+ * Albums and fetch song lyrics information by song name and artist
  * Kudos to lrclib.net
  *
  * @param trackName Song Name

@@ -1,35 +1,42 @@
-import {Box, Button, Card, Container, TextField} from "@mui/material";
+import {Box, Button, Container} from "@mui/material";
 import {useEffect, useState} from "react";
-import {fetchReleaseGroups} from "../services/artists.ts";
+import {fetchReleaseGroups} from "../services/get-artists.ts";
 import AlbumTile from "./AlbumTile.tsx";
 import {IReleaseGroup} from "musicbrainz-api";
 import {animate, motion, useMotionValue} from "framer-motion";
+import {useLocation} from "react-router-dom";
 
 
-function Search () {
-    const [searchArtist, setSearchArtist] = useState("");
+function Albums () {
     const [releases, setReleases] = useState<IReleaseGroup[]>([]);
     const [albumIndex, setAlbumIndex] = useState(0);
     const [albumIds, setAlbumIds] = useState<string[]>([]);
-    const [tileSelected, setTileSelected] = useState(false);
+    const location = useLocation();
+    const searchQuery = new URLSearchParams(location.search).get("q");
+    const [query, setQuery] = useState<string>(searchQuery ? searchQuery : "");
+
     const xTranslation = useMotionValue(0);
 
-    async function handleSearchArtist () {
-        const releaseGroups = await fetchReleaseGroups(searchArtist);
-        if (releaseGroups) {
-            //Sort the releases by their first release date
-            releaseGroups.sort((a, b) => {
-                const dateA = new Date(a['first-release-date']);
-                const dateB = new Date(b['first-release-date']);
-                return dateA.getTime() - dateB.getTime();
-            });
-            setAlbumIndex(0);
-            setReleases(releaseGroups.reverse());
-            setAlbumIds(releaseGroups.map(release => release.id));
-        } else {
-            setReleases([]);
+    useEffect(() => {
+        async function handleSearchArtist () {
+            const releaseGroups = await fetchReleaseGroups(query);
+            if (releaseGroups) {
+                //Sort the releases by their first release date
+                releaseGroups.sort((a, b) => {
+                    const dateA = new Date(a['first-release-date']);
+                    const dateB = new Date(b['first-release-date']);
+                    return dateA.getTime() - dateB.getTime();
+                });
+                setAlbumIndex(0);
+                setReleases(releaseGroups.reverse());
+                setAlbumIds(releaseGroups.map(release => release.id));
+            } else {
+                setReleases([]);
+            }
         }
-    }
+
+        handleSearchArtist();
+    }, [query])
 
     useEffect(() => {
         // Help from: https://www.youtube.com/watch?v=Ot4nZ6UjJLE
@@ -61,39 +68,12 @@ function Search () {
         }
     }, [xTranslation, albumIds, albumIndex]);
 
-    const handleTileClick = () => {
-        setTileSelected(!tileSelected);
-    }
-
     const album_rows = () =>
-        releases.map((release : IReleaseGroup) => <AlbumTile release={release} onTileClick={handleTileClick} key={release.id} />);
+        releases.map((release : IReleaseGroup) => <AlbumTile release={release} key={release.id} />);
 
 
     return (
         <Box sx={{bgcolor: 'black', height: '100vh', width: '100vw'}}>
-            <Card>
-                <Container maxWidth={"sm"} sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginTop: '5vh'
-                }}>
-                    <TextField value={searchArtist}
-                               onChange={(event) => setSearchArtist(event.target.value)}
-                               id="standard-basic"
-                               fullWidth
-                               label="Artist"
-                               variant="outlined"/>
-                </Container>
-                <Container maxWidth={"sm"} sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 2
-                }}>
-                    <Button variant="contained" onClick={handleSearchArtist}>Search (Artist Only)</Button>
-                </Container>
-            </Card>
             <Container id="scrolling" sx={{overflowX: 'none', marginTop: 10, minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
                 <motion.div id="scroller" style={{x: xTranslation, height: '50vh', display: 'flex'}}>
                     {album_rows()}
@@ -109,4 +89,4 @@ function Search () {
 )
 }
 
-export default Search
+export default Albums
