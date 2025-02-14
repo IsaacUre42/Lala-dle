@@ -4,9 +4,11 @@ import { IReleaseGroup } from "musicbrainz-api";
 
 type AlbumTileProps = {
     release: IReleaseGroup;
+    handleClick: (mbid: string) => void;
+    artist: string; //TODO: Pass through the artist so it can be used to fetch lyrics?
 };
 
-const AlbumTile: React.FC<AlbumTileProps> = ({ release }) => {
+const AlbumTile: React.FC<AlbumTileProps> = ({ release, handleClick }) => {
     const [coverArt, setCoverArt] = useState("");
     const [title, setTitle] = useState(release.title);
     const [albumMbid, setAlbumMbid] = useState("");
@@ -30,15 +32,10 @@ const AlbumTile: React.FC<AlbumTileProps> = ({ release }) => {
         loadAlbum();
     }, [release]);
 
-    const handleClick = () => {
-        // navigate(`/album/${albumMbid}`, { state: { title, coverArt } });
-        console.log("clicked");
-    };
-
     return (
         <div id={release.id}
              style={{ marginLeft: '5vw', height: '50vh', position: 'relative' }}
-             onClick={handleClick}
+             onClick={() => handleClick(albumMbid)}
         >
             <div className="album" style={{
                 height: '90%',

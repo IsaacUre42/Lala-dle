@@ -5,6 +5,7 @@ import AlbumTile from "./AlbumTile.tsx";
 import {IReleaseGroup} from "musicbrainz-api";
 import {animate, motion, useMotionValue} from "framer-motion";
 import {useLocation} from "react-router-dom";
+import AlbumDetails from "./AlbumDetails.tsx";
 
 
 function Albums () {
@@ -13,7 +14,9 @@ function Albums () {
     const [albumIds, setAlbumIds] = useState<string[]>([]);
     const location = useLocation();
     const searchQuery = new URLSearchParams(location.search).get("q");
-    const [query, setQuery] = useState<string>(searchQuery ? searchQuery : "");
+    const query = (searchQuery ? searchQuery : "");
+    const [showArrows, setShowArrows] = useState(false);
+    const [selectedAlbum, setSelectedAlbum] = useState("");
 
     const xTranslation = useMotionValue(0);
 
@@ -37,6 +40,14 @@ function Albums () {
 
         handleSearchArtist();
     }, [query])
+
+    useEffect(() => {
+        if (albumIds.length > 0 && selectedAlbum === "") {
+            setShowArrows(true);
+        } else {
+            setShowArrows(false);
+        }
+    }, [albumIds, selectedAlbum])
 
     useEffect(() => {
         // Help from: https://www.youtube.com/watch?v=Ot4nZ6UjJLE
@@ -68,18 +79,26 @@ function Albums () {
         }
     }, [xTranslation, albumIds, albumIndex]);
 
-    const album_rows = () =>
-        releases.map((release : IReleaseGroup) => <AlbumTile release={release} key={release.id} />);
+    const handleAlbumSelected = (mbid: string) => {
+        setSelectedAlbum(mbid);
+    }
 
+    const handleSelectedClosed = () => {
+        setSelectedAlbum("");
+    }
+
+    const album_rows = () =>
+        releases.map((release : IReleaseGroup) => <AlbumTile release={release} handleClick={handleAlbumSelected} artist={query} key={release.id} />);
 
     return (
         <Box sx={{background: 'black', height: '100vh', width: '100vw'}}>
+            {selectedAlbum ? <AlbumDetails mbid={selectedAlbum} artist={query} handleClose={handleSelectedClosed} /> : null}
             <Container id="scrolling" sx={{overflowX: 'none', marginTop: '25vh', minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
                 <motion.div id="scroller" style={{x: xTranslation, height: '50vh', display: 'flex'}}>
                     {album_rows()}
                 </motion.div>
             </Container>
-            <div style={{display: (albumIndex < albumIds.length - 1) && (albumIds.length > 0) ? "flex" : "none"}}>
+            <div style={{display: (albumIndex < albumIds.length - 1) && (showArrows) ? "flex" : "none"}}>
                 <button onClick={() => setAlbumIndex(Math.min( albumIndex + 1, albumIds.length - 1))} style={{background: "none", border: "none"}}>
                     <div className="arrow-right" style={{position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', display: "flex", alignItems: "center", justifyContent: "center"}}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="white" fill="white" style={{width: '50%', height: '50%'}}>
@@ -88,7 +107,7 @@ function Albums () {
                     </div>
                 </button>
             </div>
-            <div style={{display: (albumIndex > 0) && (albumIds.length > 0)? "flex" : "none"}}>
+            <div style={{display: (albumIndex > 0) && (showArrows)? "flex" : "none"}}>
                 <button onClick={() => setAlbumIndex(Math.max(albumIndex - 1, 0))} style={{background: "none", border: "none"}}>
                     <div className="arrow-left" style={{position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%) scaleX(-1)', display: "flex", alignItems: "center", justifyContent: "center"}}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="white" fill="white" style={{width: '50%', height: '50%'}}>
