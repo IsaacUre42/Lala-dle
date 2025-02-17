@@ -2,7 +2,7 @@ import LyricsResponse from "../types/responses/LyricsResponse.ts";
 import processedLyrics from "../types/Lyrics.ts";
 
 const HEADERS = {
-    'Lrclib-Client': 'LalalaEnjoyer v0.1.0 (local only)'
+    'Lrclib-Client': 'Lala-dle v0.1.0 (https://github.com/IsaacUre42/laladle)'
 }
 
 

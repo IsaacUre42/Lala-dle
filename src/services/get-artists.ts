@@ -1,9 +1,9 @@
 import {IRelease, IReleaseGroup, MusicBrainzApi} from 'musicbrainz-api';
 
 const mbApi = new MusicBrainzApi({
-    appName: 'Lalala Enjoyers',
+    appName: 'Lala-dle',
     appVersion: '0.1.0',
-    appContactInfo: 'zeek28@outlook.com',
+    appContactInfo: 'https://github.com/IsaacUre42/laladle',
 });
 
 /**
