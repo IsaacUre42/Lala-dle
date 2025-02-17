@@ -1,50 +1,17 @@
-# React + TypeScript + Vite
+## Lala-dle
+A standalone frontend webapp that fetches song information
+with the goal of calculating what percentage of the lyrics
+are made up of nonsense words such as "lalala".<br>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project has been inspired by my personal perception
+that modern music is more and more being shaped by fun beats and
+'feel good vibes' at the expense of meaningful messages. <br>
+Consider this the revolution, lets take back our lyrics! /j 
 
-Currently, two official plugins are available:
+As a simple personal project there is no backend and the
+app makes extensive use of the following free APIs:<br>
+ - MusicBrainz (https://musicbrainz.org/doc/MusicBrainz_API)
+ - lrclib (https://lrclib.net/docs)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+Both are great services but the website does suffer slightly
+at the cost of MusicBrainz's rate limiting in particular.
