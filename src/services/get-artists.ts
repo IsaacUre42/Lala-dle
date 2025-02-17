@@ -3,7 +3,7 @@ import {IRelease, IReleaseGroup, MusicBrainzApi} from 'musicbrainz-api';
 const mbApi = new MusicBrainzApi({
     appName: 'Lala-dle',
     appVersion: '0.1.0',
-    appContactInfo: 'https://github.com/IsaacUre42/laladle',
+    appContactInfo: 'https://github.com/IsaacUre42/Lala-dle',
 });
 
 /**
