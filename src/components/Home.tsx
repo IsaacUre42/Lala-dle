@@ -1,17 +1,7 @@
-import {Container, TextField} from "@mui/material";
-import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {Container} from "@mui/material";
+import Search from "./Search.tsx";
 
 function Home  ()  {
-    const [artist, setArtist] = useState("");
-    const navigate = useNavigate();
-
-    const searchArtist = (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.code === "Enter"){
-            navigate(`search?q=${artist}`);
-        }
-    }
-
     return (
         <Container sx={{
             display: 'flex',
@@ -29,11 +19,7 @@ function Home  ()  {
                 justifyContent: 'center',
                 borderRadius: '1em'
             }}>
-                <TextField id="outlined-basic" label="Albums for artists" variant="outlined" fullWidth
-                           onChange={(event) => setArtist(event.target.value)}
-                           value={artist}
-                           onKeyDown={(event) => searchArtist(event)}
-                />
+                <Search />
             </Container>
         </Container>
     )

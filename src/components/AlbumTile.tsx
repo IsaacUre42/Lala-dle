@@ -5,7 +5,7 @@ import { IReleaseGroup } from "musicbrainz-api";
 type AlbumTileProps = {
     release: IReleaseGroup;
     handleClick: (mbid: string) => void;
-    artist: string; //TODO: Pass through the artist so it can be used to fetch lyrics?
+    artist: string;
 };
 
 const AlbumTile: React.FC<AlbumTileProps> = ({ release, handleClick }) => {
