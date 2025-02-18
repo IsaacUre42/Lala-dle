@@ -17,6 +17,7 @@ function Albums () {
     const query = (searchQuery ? searchQuery : "");
     const [showArrows, setShowArrows] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const xTranslation = useMotionValue(0);
 
@@ -87,16 +88,28 @@ function Albums () {
         setSelectedAlbum("");
     }
 
+    useEffect(() => {
+        if (albumIds.length !== 0) {
+            setLoading(false);
+        }
+    }, [albumIds]);
+
     const album_rows = () =>
-        releases.map((release : IReleaseGroup) => <AlbumTile release={release} handleClick={handleAlbumSelected} artist={query} key={release.id} />);
+        releases.map((release : IReleaseGroup) =>
+            <AlbumTile release={release} handleClick={handleAlbumSelected} artist={query} key={release.id} />);
 
     return (
         <Box sx={{background: 'black', height: '100vh', width: '100vw'}}>
             {selectedAlbum ? <AlbumDetails mbid={selectedAlbum} artist={query} handleClose={handleSelectedClosed} /> : null}
             <Container id="scrolling" sx={{overflowX: 'none', marginTop: '25vh', minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
+                {loading ?
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>
+                    <img src="/loading.gif" alt="Loading..." />
+                </div> :
                 <motion.div id="scroller" style={{x: xTranslation, height: '50vh', display: 'flex'}}>
                     {album_rows()}
                 </motion.div>
+                }
             </Container>
             <div style={{display: (albumIndex < albumIds.length - 1) && (showArrows) ? "flex" : "none"}}>
                 <button onClick={() => setAlbumIndex(Math.min( albumIndex + 1, albumIds.length - 1))} style={{background: "none", border: "none"}}>
