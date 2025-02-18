@@ -1,5 +1,6 @@
 import LyricsResponse from "../types/responses/LyricsResponse.ts";
 import processedLyrics from "../types/Lyrics.ts";
+import Lyrics from "../types/Lyrics.ts";
 
 const HEADERS = {
     'Lrclib-Client': 'Lala-dle v0.1.0 (https://github.com/IsaacUre42/Lala-dle)'
@@ -28,7 +29,7 @@ async function fetchLyrics (trackName: string, trackArtist: string) {
         return data;
     } catch (error) {
         console.error('Error fetching lyrics:', error);
-        throw error;
+        return null;
     }
 }
 
@@ -54,7 +55,6 @@ function calculateNonsenseCount(lyrics: string) {
 
 /**
  * The public function that calls for a song lookup and processes the result.
- * TODO: Handle Song not found case.
  *
  * @param trackName Song Name
  * @param trackArtist Song Artist
@@ -63,13 +63,23 @@ function calculateNonsenseCount(lyrics: string) {
  */
 async function processLyrics (trackName: string, trackArtist: string) {
     const lyrics = await fetchLyrics(trackName, trackArtist);
-    const nonsenseCount = calculateNonsenseCount(lyrics.plainLyrics);
-    const lyricWords = lyrics.plainLyrics.split(/[\s-]+/);
-    const lyricsWordCount = lyricWords.filter(word => word.length > 0).length;
-    const processedLyrics : processedLyrics = {
-        text: lyrics,
-        nonsenseWordCount: nonsenseCount,
-        totalWordCount: lyricsWordCount
+    if (lyrics !== null && lyrics.plainLyrics !== null) {
+        const nonsenseCount = calculateNonsenseCount(lyrics.plainLyrics);
+        const lyricWords = lyrics.plainLyrics.split(/[\s-]+/);
+        const lyricsWordCount = lyricWords.filter(word => word.length > 0).length;
+        const processedLyrics : processedLyrics = {
+            text: lyrics,
+            nonsenseWordCount: nonsenseCount,
+            totalWordCount: lyricsWordCount,
+            found: true
+        }
+        return processedLyrics;
+    }
+    const processedLyrics : Lyrics = {
+        text: {albumName: "", plainLyrics: "", artistName: "", syncedLyrics: "", trackName: "", id: 0, duration: 0, instrumental: false},
+        nonsenseWordCount: 0,
+        totalWordCount: 0,
+        found: false
     }
     return processedLyrics;
 }
