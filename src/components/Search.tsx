@@ -13,7 +13,7 @@ function Search () {
     }
 
     return (
-        <TextField id="outlined-basic" label="Albums for artists" variant="outlined" fullWidth
+        <TextField id="outlined-basic" label="Artist" variant="outlined" fullWidth
                    onChange={(event) => setArtist(event.target.value)}
                    value={artist}
                    onKeyDown={(event) => searchArtist(event)}

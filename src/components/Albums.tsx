@@ -101,13 +101,13 @@ function Albums () {
 
     return (
         <Box sx={{background: 'black', height: '100vh', width: '100vw'}}>
+            {selectedAlbum ? <AlbumDetails mbid={selectedAlbum} artist={query} handleClose={handleSelectedClosed} /> : null}
             <Box sx={{background: 'white', height: '10vh', width: '100vw', display: 'flex'}}>
                 <Container>
                     <Search />
                 </Container>
             </Box>
             <Box sx={{background: 'black', height: '90vh', width: '100vw'}}>
-                {selectedAlbum ? <AlbumDetails mbid={selectedAlbum} artist={query} handleClose={handleSelectedClosed} /> : null}
                 <Container id="scrolling" sx={{overflowX: 'none', paddingTop: '15vh',minWidth: '100%', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }}}>
                     {loading ?
                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>
